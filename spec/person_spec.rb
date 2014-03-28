@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe Person do
   it { should validate_presence_of :name }
+  it { should have_many(:children) }
+  it { should have_many(:parents) }
 
   context '#spouse' do
     it 'returns the person with their spouse_id' do
@@ -24,4 +26,13 @@ describe Person do
     earl.reload
     earl.spouse_id.should eq steve.id
   end
+
+  it "Should create a child with two different parent ids" do
+    bob = Person.create(:name => 'Bob', :gender => "M", :parent_id1 => nil, :parent_id2 => nil)
+    mildred = Person.create(:name => 'Mildred', :gender => 'F', :parent_id1 => nil, :parent_id2 => nil)
+    junior = Person.create(:name => 'Junior', :gender => 'F', :parent_id1 => bob.id, :parent_id2 => mildred.id)
+    junior.parent_id2.should eq mildred.id
+  end
+
+
 end

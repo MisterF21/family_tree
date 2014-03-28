@@ -1,6 +1,10 @@
 class Person < ActiveRecord::Base
   validates :name, :presence => true
 
+  has_many :children, :through => :parents, :class_name => 'Person'
+
+  has_many :parents, :through => :children, :class_name => 'Person'
+
   after_save :make_marriage_reciprocal
 
   def spouse
@@ -9,6 +13,13 @@ class Person < ActiveRecord::Base
     else
       Person.find(spouse_id)
     end
+  end
+
+  def get_parents
+    parents_array = []
+    parents_array << Person.find(self.parent_id1)
+    parents_array << Person.find(self.parent_id2)
+    parents_array
   end
 
 private
